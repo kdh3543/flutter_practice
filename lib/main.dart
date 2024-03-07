@@ -1,4 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_project/widgets/Button.dart';
+import 'package:flutter_project/widgets/currency-card.dart';
 
 class Player {
   String? name;
@@ -6,7 +10,7 @@ class Player {
 }
 
 void main() {
-  runApp(App());
+  runApp(const App());
 }
 
 // statelesswidget - 상태를 가지지 않는 위젯 클래스(flutter 기본 widget)
@@ -15,49 +19,52 @@ void main() {
 
 // statefullwidget - 한번 생성한 화면의 구성이 어떠한 이유로 인해 변경될 수 있는 경우에 사용하는 위젯 클래스다.
 // setstate 메서드를 이용해 상태 변경
-class App extends StatelessWidget {
+class App extends StatefulWidget {
+  const App({super.key});
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  int counter = 0;
+  List<int> numbers = [];
+
+  void onClicked() {
+    setState(() {
+      // counter = 0;
+      numbers.add(numbers.length);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // MaterialApp() ==> google
     // CupertinoApp() ==> ios
-    // scaffold -> 화면에 맞춰서 중앙정렬 및 css 적용
     return MaterialApp(
-        home: Scaffold(
-      backgroundColor: Color(0xFF181818),
-      body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 40),
+      home: Scaffold(
+        backgroundColor: const Color(0xFFF4EDDB),
+        body: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
-                height: 80,
+              const Text(
+                'Click',
+                style: TextStyle(fontSize: 20),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Hey, Selena',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      Text(
-                        'Welcome back',
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.8),
-                          fontSize: 18,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              )
+              Text(
+                '$counter',
+                style: const TextStyle(fontSize: 20),
+              ),
+              for (var n in numbers) Text('$n'),
+              IconButton(
+                onPressed: onClicked,
+                icon: const Icon(Icons.add_box_rounded),
+              ),
             ],
-          )),
-    ));
+          ),
+        ),
+      ),
+    );
   }
 }
