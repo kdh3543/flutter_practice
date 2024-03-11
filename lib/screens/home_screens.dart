@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,6 +10,61 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  static const twentyFiveMinutes = 1500;
+  int totalSeconds = 10;
+  bool isRunning = false;
+  int totalPomodoros = 0;
+  late Timer timer;
+
+  void onTick(Timer timer) {
+    if (totalSeconds == 0) {
+      setState(() {
+        totalPomodoros = totalPomodoros + 1;
+        isRunning = false;
+        totalSeconds = twentyFiveMinutes;
+      });
+      timer.cancel();
+    } else {
+      setState(() {
+        totalSeconds = totalSeconds - 1;
+      });
+    }
+  }
+
+  void onStartPress() {
+    timer = Timer.periodic(
+      const Duration(
+        seconds: 1,
+      ),
+      onTick,
+    );
+    setState(() {
+      isRunning = true;
+    });
+  }
+
+  void onPausePressed() {
+    timer.cancel();
+    setState(() {
+      isRunning = false;
+    });
+  }
+
+  void onStopTimer() {
+    timer.cancel();
+    setState(() {
+      isRunning = false;
+      totalSeconds = twentyFiveMinutes;
+    });
+  }
+
+  String format(int seconds) {
+    var duration = Duration(seconds: seconds);
+
+    print(duration);
+    return duration.toString().split('.').first.substring(2, 7);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Container(
               alignment: Alignment.bottomCenter,
               child: Text(
-                '25:00',
+                format(totalSeconds),
                 style: TextStyle(
                   color: Theme.of(context).cardColor,
                   fontSize: 89,
@@ -33,13 +88,34 @@ class _HomeScreenState extends State<HomeScreen> {
           Flexible(
             flex: 3,
             child: Center(
-              child: IconButton(
-                iconSize: 120,
-                color: Theme.of(context).cardColor,
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.play_circle_outline_outlined,
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    iconSize: 120,
+                    color: Theme.of(context).cardColor,
+                    onPressed: isRunning ? onPausePressed : onStartPress,
+                    icon: Column(
+                      children: [
+                        Icon(
+                          isRunning
+                              ? Icons.pause_circle_outline_outlined
+                              : Icons.play_circle_outline_outlined,
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    iconSize: 120,
+                    color: Theme.of(context).cardColor,
+                    onPressed: onStopTimer,
+                    icon: const Column(
+                      children: [
+                        Icon(Icons.stop_circle_outlined),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -51,6 +127,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: Theme.of(context).cardColor,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(50),
+                        topRight: Radius.circular(50),
+                      ),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -67,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         Text(
-                          '0',
+                          '$totalPomodoros',
                           style: TextStyle(
                             fontSize: 58,
                             color: Theme.of(context)
