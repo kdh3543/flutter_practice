@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_project/widgets/Button.dart';
-import 'package:flutter_project/widgets/currency-card.dart';
 
 class Player {
   String? name;
@@ -29,6 +27,13 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   int counter = 0;
   List<int> numbers = [];
+  bool show = true;
+
+  void toggleTitle() {
+    setState(() {
+      show = !show;
+    });
+  }
 
   void onClicked() {
     setState(() {
@@ -38,33 +43,72 @@ class _AppState extends State<App> {
   }
 
   @override
+  // buildcontext --> 위젯 트리에서 위젯의 위치를 제공하고 상위 요소 데이터에 접근가능
   Widget build(BuildContext context) {
     // MaterialApp() ==> google
     // CupertinoApp() ==> ios
     return MaterialApp(
+      theme: ThemeData(
+        textTheme: const TextTheme(
+          titleLarge: TextStyle(
+            color: Colors.red,
+          ),
+        ),
+      ),
       home: Scaffold(
         backgroundColor: const Color(0xFFF4EDDB),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                'Click',
-                style: TextStyle(fontSize: 20),
-              ),
-              Text(
-                '$counter',
-                style: const TextStyle(fontSize: 20),
-              ),
-              for (var n in numbers) Text('$n'),
+              show ? const MyLargeTitle() : const Text('not show title'),
               IconButton(
-                onPressed: onClicked,
-                icon: const Icon(Icons.add_box_rounded),
-              ),
+                onPressed: toggleTitle,
+                icon: const Icon(Icons.remove_red_eye),
+              )
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class MyLargeTitle extends StatefulWidget {
+  const MyLargeTitle({
+    super.key,
+  });
+
+  @override
+  State<MyLargeTitle> createState() => _MyLargeTitleState();
+}
+
+class _MyLargeTitleState extends State<MyLargeTitle> {
+  int count = 0;
+
+  // widget life cycle;
+  // 위젯이 생성될 때 호출되는 메서드
+  @override
+  void initState() {
+    super.initState();
+    print('hello');
+  }
+
+  // 위젯이 스크린에서 제거될 때 호출되는 메서드
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    print('good bye');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print('widget');
+    return Text(
+      'My Large Title',
+      style: TextStyle(
+          fontSize: 30, color: Theme.of(context).textTheme.titleLarge?.color),
     );
   }
 }
