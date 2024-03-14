@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_project/screens/home_screen.dart';
 
 void main() {
-  runApp(App());
+  runApp(const App());
 }
 
 // statelesswidget - 상태를 가지지 않는 위젯 클래스(flutter 기본 widget)
@@ -14,11 +15,12 @@ void main() {
 // setstate 메서드를 이용해 상태 변경
 class App extends StatelessWidget {
   const App({super.key});
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return MaterialApp(
-      home: Container(),
+    return const MaterialApp(
+      home: HomeScreen(),
     );
   }
 }
