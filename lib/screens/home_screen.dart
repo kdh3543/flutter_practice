@@ -3,39 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_project/models/webtoon_model.dart';
 import 'package:flutter_project/services/api_service.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends StatelessWidget {
+  HomeScreen({super.key});
 
-  static const api = ApiService;
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  List<WebtoonModel> webtoons = [];
-  bool isLoading = true;
-
-  void waitForWebToons() async {
-    webtoons = await ApiService.getTodaysToons();
-    isLoading = false;
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    waitForWebToons();
-  }
-
-  void getToon() {
-    print(HomeScreen.api);
-  }
+  final Future<List<WebtoonModel>> webtoons = ApiService.getTodaysToons();
 
   @override
   Widget build(BuildContext context) {
-    print(webtoons);
-    print(isLoading);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -51,6 +25,28 @@ class _HomeScreenState extends State<HomeScreen> {
             fontWeight: FontWeight.w500,
           ),
         ),
+      ),
+      // statefulwidget을 굳이 쓸 필요가 없는 이유(FutureBuilder 가 해줌)
+      body: FutureBuilder(
+        future: webtoons,
+        builder: (context, futureResult) {
+          if (futureResult.hasData) {
+            return ListView.separated(
+              separatorBuilder: (context, index) => const SizedBox(
+                width: 20,
+              ),
+              scrollDirection: Axis.horizontal,
+              itemCount: futureResult.data!.length,
+              itemBuilder: (context, index) {
+                var webtoon = futureResult.data![index];
+                return Text(webtoon.title);
+              },
+            );
+          }
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
       ),
     );
   }
