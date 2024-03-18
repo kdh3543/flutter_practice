@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_project/models/webtoon_model.dart';
 import 'package:flutter_project/services/api_service.dart';
+import 'package:flutter_project/widgets/webtoon_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -31,23 +33,44 @@ class HomeScreen extends StatelessWidget {
         future: webtoons,
         builder: (context, futureResult) {
           if (futureResult.hasData) {
-            return ListView.separated(
-              separatorBuilder: (context, index) => const SizedBox(
-                width: 20,
-              ),
-              scrollDirection: Axis.horizontal,
-              itemCount: futureResult.data!.length,
-              itemBuilder: (context, index) {
-                var webtoon = futureResult.data![index];
-                return Text(webtoon.title);
-              },
+            return Column(
+              children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                Expanded(child: makeList(futureResult)),
+              ],
             );
           }
+          print(futureResult);
+
           return const Center(
             child: CircularProgressIndicator(),
           );
         },
       ),
+    );
+  }
+
+  ListView makeList(AsyncSnapshot<List<WebtoonModel>> futureResult) {
+    return ListView.separated(
+      separatorBuilder: (context, index) => const SizedBox(
+        width: 40,
+      ),
+      scrollDirection: Axis.horizontal,
+      itemCount: futureResult.data!.length,
+      padding: const EdgeInsets.symmetric(
+        vertical: 10,
+        horizontal: 20,
+      ),
+      itemBuilder: (context, index) {
+        var webtoon = futureResult.data![index];
+        return Webtoon(
+          title: webtoon.title,
+          id: webtoon.id,
+          thumb: webtoon.thumb,
+        );
+      },
     );
   }
 }
